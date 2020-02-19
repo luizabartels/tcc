@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS `aula` (
+	`id` int(10) NOT NULL AUTO_INCREMENT,
+  	`aula` varchar(100) NOT NULL,
+  	`inicio` time NOT NULL,
+	`fim` time NOT NULL,
+  	`dias` varchar(100) NOT NULL,
+	`instrutor` varchar(100) NOT NULL,
+	`sala` int(10) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `avaliacao` (
+	`id` int(10) NOT NULL AUTO_INCREMENT,
+  	`matricula` int(10) NOT NULL,
+  	`data` date NOT NULL,
+	`etilismo` varchar(5) NOT NULL,
+  	`tabagismo` varchar(5) NOT NULL,
+	`historico` text NOT NULL,
+	`cirurgias` text NOT NULL,
+	`queixas` text NOT NULL,
+	`triceps` int(10) NOT NULL,
+	`iliaca` int(10) NOT NULL,
+	`peitoral` int(10) NOT NULL,
+	`coxa` int(10) NOT NULL,
+	`abdome` int(10) NOT NULL,
+	`idade` int(10) NOT NULL,
+	`repouso` int(10) NOT NULL,
+	`exercicio` int(10) NOT NULL,
+	`pressao` varchar(10) NOT NULL,
+	`borg` int(10) NOT NULL,
+	`relato` text NOT NULL,
+	`laudo` text NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `alunos` (
+	`id` int(10) NOT NULL AUTO_INCREMENT,
+  	`matricula` int(10) NOT NULL,
+  	`nome` varchar(255) NOT NULL,
+	`identidade` varchar(20) NOT NULL,
+  	`cpf` varchar(20) NOT NULL,
+	`endereco` varchar(255) NOT NULL,
+	`plano` varchar(10) NOT NULL,
+	`pagamento` date NOT NULL,
+	`ppagamento` date NOT NULL,
+	`dfisio` date NOT NULL,
+	`hfisio` time NOT NULL,
+	`digital` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+$sql = ("INSERT INTO `alunos` (`matricula`, `nome`, `identidade`, `cpf`, `endereco`, `plano`) VALUES ('$aluno_matricula', '$aluno_nome', '$aluno_identidade', '$aluno_cpf', ' $aluno_endereco', '$aluno_plano')");
+
+$sql = ("UPDATE `alunos` SET `ppagamento` = '2020-03-16' WHERE `alunos`.`matricula` = $matricula")
