@@ -1,4 +1,48 @@
 <?php
+
+session_start();
+
+$DATABASE_HOST = 'localhost';
+$DATABASE_USER = 'root';
+$DATABASE_PASS = '';
+$DATABASE_NAME = 'academia';
+
+$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+
+mysqli_error($con); 
+
+if (isset($_POST['registrar']))
+{
+    date_default_timezone_set('America/Sao_Paulo');
+    
+    $_SESSION['regavaliacao'] = TRUE;
+
+    $matricula = $_POST['matricula_aluno'];
+    $_SESSION['matricula'] = $_POST['matricula_aluno'];
+    $rawdate = htmlentities($_POST['data_aluno']);
+    $date = date('Y-m-d', strtotime($rawdate));
+    $_SESSION['data'] = $date;
+    $_SESSION['hora'] = $_POST['hora_aluno'];
+
+    $sql = "SELECT nome FROM alunos WHERE matricula = $matricula";
+
+    if($result = mysqli_query($con, $sql))
+    {
+     if(mysqli_num_rows($result) > 0)
+     {
+        while($row = mysqli_fetch_array($result))
+        {
+         $nome = $row['nome'];
+         $_SESSION['nome'] = $nome;
+
+         echo $nome;
+        }
+     }
+    }
+    
+    header('Location: confirmaMarcacaoAvaliacao.php');
+}
+
 ?>
 
 <DOCTYPE html>
@@ -92,7 +136,7 @@
                                     margin: 5px 5px 5px 5px;
                                     padding: 0 10px;
                                     border-radius: 10px;"
-                            class="form-control" name = "pagamento_aluno" id = "pagamento_aluno" required>
+                            class="form-control" name = "data_aluno" id = "data_aluno" required>
                 </div>
 
                 <div class="input-group input-group-lg">
@@ -109,7 +153,7 @@
                                     margin: 5px 5px 5px 5px;
                                     padding: 0 10px;
                                     border-radius: 10px;"
-                            class="form-control" name = "pagamento_aluno" id = "pagamento_aluno" required>
+                            class="form-control" name = "hora_aluno" id = "hora_aluno" required>
                 </div>
             
 

@@ -1,0 +1,44 @@
+if($result = mysqli_query($con, $sql))
+{
+  if(mysqli_num_rows($result) > 0)
+  {
+    while($row = mysqli_fetch_array($result))
+    {
+      $count[] = $row;
+      $num = count($count);
+      
+      $matricula = $row['matricula'];
+      $dfisio = $row['dfisio'];
+      $dfisio = strtotime(str_replace('-','/', $dfisio));
+      $dif_data = ($data_atual - $dfisio)/86400;
+
+      $hfisio = $row['hfisio'];
+      $hfisio = new DateTime("$hfisio");
+      $hfisio_int = strtotime($hfisio);
+
+      $dif_hora = $hora_atual->diff($hfisio);
+      
+      if ($dif_data == 0)
+      {
+        
+            //$dif_hora->format("%H:%I:%S");
+            $dif_hora = strtotime($dif_hora);
+            echo $dif_hora;
+            echo ' $ ';
+            //echo $dif_hora;
+            //echo $hora_antiga;
+            echo ' $ ';
+            echo (int)time();
+            echo ' $ ';
+        
+        
+        
+
+      }
+    }
+  }
+
+
+  1582253999-1582167600-passado%09:%0:%th
+  1582253999-1582203600-passado%09:%0:%th
+  1582253999-1582167600-passado%09:%0:%th

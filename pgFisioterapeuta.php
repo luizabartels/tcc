@@ -2,10 +2,6 @@
 
 session_start();
 
-if (!isset($_SESSION['loggedin'])) {
-	header('Location: login.php');
-	exit();
-}
 $DATABASE_HOST = 'localhost';
 $DATABASE_USER = 'root';
 $DATABASE_PASS = '';
@@ -13,19 +9,64 @@ $DATABASE_NAME = 'academia';
 
 $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
 
-if ( mysqli_connect_errno()) 
+mysqli_error($con); 
+
+$cont = 0;
+
+date_default_timezone_set('America/Sao_Paulo');
+$data_atual = new DateTime();
+$data_atual = date_format($data_atual, 'Y-m-d');
+$data_atual = strtotime(str_replace('-','/', $data_atual));
+
+$hora_atual = new DateTime();
+$hora_atual -> format("%H:%I:%S");
+$hora_atual_int = strtotime(date_format($hora_atual, 'H:i:s')); // converte a hora em inteiro para comparações
+
+$hora_flag = new DateTime('23:59:59');
+$hora_flag = strtotime(date_format($hora_flag, 'H:i:s')); // converte a hora em inteiro para comparações
+
+$hora_array = array();
+$matricula_array = array();
+$dia_array = array();
+
+$sql = "SELECT matricula, dfisio, hfisio FROM alunos";
+
+
+if($result = mysqli_query($con, $sql))
 {
-	die ('Failed to connect to MySQL: ' . mysqli_connect_error());
+  if(mysqli_num_rows($result) > 0)
+  {
+    while($row = mysqli_fetch_array($result))
+    {
+      $matricula = $row['matricula'];
+      $dfisio = $row['dfisio'];
+      $dfisio = strtotime(str_replace('-','/', $dfisio));
+      $dif_data = ($data_atual - $dfisio)/86400;
+
+      $hfisio = $row['hfisio'];
+      $hfisio_int = strtotime($hfisio);
+      $hfisio = new DateTime("$hfisio");
+
+      $dif_hora = $hora_atual->diff($hfisio);
+      
+      if ($dif_data == 0)
+      {
+        if ($hfisio_int > $hora_atual_int)
+        {
+              $cont++;
+              $hora_array[$cont] = $row['hfisio'];
+              $matricula_array[$cont] = [$row['hfisio'] => $row['matricula']];
+              $dia_array[$cont] = [$row['hfisio'] => $row['dfisio']];
+        }
+       }
+    }
+    sort($hora_array);
+    sort($matricula_array);
+    sort($dia_array);
+       
+  }
 }
-
-$stmt = $con->prepare('SELECT matricula, nome, identidade, cpf FROM alunos WHERE matricula = ?');
-
-$stmt->bind_param('i', $_SESSION['matricula']);
-$stmt->execute();
-$stmt->bind_result($matricula, $nome, $identidade, $cpf);
-$stmt->fetch();
-$stmt->close();
-
+header("Refresh:60; url=pgFisioterapeuta.php");
 ?>
 
 <DOCTYPE html>
@@ -46,13 +87,15 @@ $stmt->close();
 	}
 	</style>
     <body style = "background-color: black;">
-		<nav style = "background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 40px;" >
+		<nav style = "background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: auto;" >
 			<span class="navbar-brand mb-0 h1">FISIOTERAPIA</span>
 		</nav>
-        <div class = "container" style = "width: 600px; background-color: #FFC000; margin: 100px auto; border-radius: 30px;">
+        <div class = "container" style = "width: auto; background-color: #FFC000; margin: 100px auto; border-radius: 30px;">
                 <table class="table table-borderless">
                     <thead>
                         <tr>
+                        <th></th>
+                        <th></th>
                         <th scope="col">MATRÍCULA</th>
                         <th scope="col">DIA</th>
                         <th scope="col">HORA</th>
@@ -60,23 +103,19 @@ $stmt->close();
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                        <td><?=$nome;?></th>
-                        <td><?=$_SESSION['matricula']?></td>
-                        <td>Otto</td>
-                        
-                        </tr>
-                        <tr>
-                        <td>2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        
-                        </tr>
-                        <tr>
-                        <td>2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        </tr>
+                
+                        <?php
+                        for ($i = 0; $i < $cont; $i++)
+                        {
+                           echo '<tr>';
+                           echo '<td></td>';
+                           echo '<td></td>';
+                           echo '<td>'; echo $matricula_array[$i][$hora_array[$i]]; echo '</td>';
+                           echo '<td>'; echo $dia_array[$i][$hora_array[$i]]; echo '</td>';
+                           echo '<td>'; echo $hora_array[$i]; echo '</td>';
+                          echo '</tr>';
+                        }
+                    ?>
                     </tbody>
                     </table>
         </div>

@@ -31,6 +31,7 @@ if (isset($_POST['registrar']))
     
 
     $sql = "SELECT plano FROM alunos WHERE matricula = $matricula";
+
     if($result = mysqli_query($con, $sql))
     {
      if(mysqli_num_rows($result) > 0)
@@ -52,7 +53,11 @@ if (isset($_POST['registrar']))
     {
         $ppagamento->add(new DateInterval('P365D'));
         $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+
+        
     }
+
+    
     
     header('Location: confirmaPagamento.php');
 }

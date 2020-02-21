@@ -14,29 +14,27 @@ if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-if (!isset($_SESSION['regpagamento'])) {
-	header('Location: registraAula.php');
+if (!isset($_SESSION['regavaliacao'])) {
+	header('Location: registraAvaliacao.php');
 	exit();
 }
 
     $matricula = $_SESSION['matricula'];
-	$pagamento = $_SESSION['pagamento'];
-	$ppagamento = $_SESSION['ppagamento'];
-    $iferias = $_SESSION['iferias'];
-	$fferias = $_SESSION['fferias'];
-	$plano = $_SESSION['plano'];
+	$data = $_SESSION['data'];
+	$hora = $_SESSION['hora'];
+	$nome = $_SESSION['nome'];
 
 if (isset($_REQUEST['registrar']))
 {
     //Adicionar comparação com itens do banco de dado.
 
-	$sql = ("UPDATE `alunos` SET `pagamento` = '$pagamento', `ppagamento` = '$ppagamento' WHERE `alunos`.`matricula` = $matricula");
+	$sql = ("UPDATE `alunos` SET `dfisio` = '$data', `hfisio` = '$hora' WHERE `alunos`.`matricula` = $matricula");
 	
 	mysqli_query($con, $sql);
     
     if(mysqli_query($con, $sql))
     {
-        header('Location: registraPagamento.php');
+        header('Location: registraAvaliacao.php');
     }
     else
     {
@@ -67,7 +65,7 @@ if (isset($_REQUEST['registrar']))
 					 font-family: Bahnschrift SemiBold;
 					 text-align: center;
 					 font-size: 40px;" >
-			<span class="navbar-brand mb-0 h1">CADASTRO DE AULA - CONFIRMAÇÃO</span>
+			<span class="navbar-brand mb-0 h1">AGENDAMENTO DE AVALIAÇÃO - CONFIRMAÇÃO</span>
 		</nav>
         <div class = "container" style = "width: 600px;
                       background-color: #FFC000;
@@ -79,29 +77,21 @@ if (isset($_REQUEST['registrar']))
 						<td></td>
 					</tr>
 					<tr>
+						<td style = "font-family: Bahnschrift SemiBold;">Aluno:</td>
+						<td><?=$nome?></td>
+					</tr>
+					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
 						<td><?=$matricula?></td>
 					</tr>
 					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Plano:</td>
-						<td><?=$plano?></td>
+						<td style = "font-family: Bahnschrift SemiBold;">Data:</td>
+						<td><?=$data?></td>
 					</tr>
 					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Data de pagamento:</td>
-						<td><?=$pagamento?></td>
+						<td style = "font-family: Bahnschrift SemiBold;">Hora:</td>
+						<td><?=$hora?></td>
 					</tr>
-					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Próximo pagamento:</td>
-						<td><?=$ppagamento?></td>
-					</tr>
-					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Início de férias:</td>
-						<td><?=$iferias?></td>
-                    </tr>
-                    <tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Fim de férias:</td>
-						<td><?=$fferias?></td>
-                    </tr>
                     <tr>
 						<td></td>
 						<td></td>
