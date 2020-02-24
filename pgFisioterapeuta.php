@@ -11,7 +11,7 @@ $con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_
 
 mysqli_error($con); 
 
-$cont = 0;
+$cont = -1;
 
 date_default_timezone_set('America/Sao_Paulo');
 $data_atual = new DateTime();
@@ -54,16 +54,33 @@ if($result = mysqli_query($con, $sql))
         if ($hfisio_int > $hora_atual_int)
         {
               $cont++;
+              
               $hora_array[$cont] = $row['hfisio'];
-              $matricula_array[$cont] = [$row['hfisio'] => $row['matricula']];
-              $dia_array[$cont] = [$row['hfisio'] => $row['dfisio']];
+              $matricula_array[$cont] = ['matricula' => $row['matricula'], 'hora' => $hfisio_int];
+              $dia_array[$cont] = ['dia' => $row['dfisio'], 'hora' => $hfisio_int];
         }
        }
     }
+
+    function sort_por_hora($x, $y) 
+    {
+      return $x['hora'] - $y['hora'];
+    }
+  
+    usort($matricula_array, 'sort_por_hora');
+    usort($dia_array, 'sort_por_hora');
     sort($hora_array);
-    sort($matricula_array);
-    sort($dia_array);
-       
+    
+    /*
+    echo "<pre>";
+    print_r($matricula_array);
+    echo "</pre>";
+
+    echo "<pre>";
+    print_r($hora_array);
+    echo "</pre>";
+    */
+    
   }
 }
 header("Refresh:60; url=pgFisioterapeuta.php");
@@ -105,13 +122,13 @@ header("Refresh:60; url=pgFisioterapeuta.php");
                     <tbody>
                 
                         <?php
-                        for ($i = 0; $i < $cont; $i++)
+                        for ($i = 0; $i <= $cont; $i++)
                         {
                            echo '<tr>';
                            echo '<td></td>';
                            echo '<td></td>';
-                           echo '<td>'; echo $matricula_array[$i][$hora_array[$i]]; echo '</td>';
-                           echo '<td>'; echo $dia_array[$i][$hora_array[$i]]; echo '</td>';
+                           echo '<td>'; echo $matricula_array[$i]['matricula']; echo '</td>';
+                           echo '<td>'; echo $dia_array[$i]['dia']; echo '</td>';
                            echo '<td>'; echo $hora_array[$i]; echo '</td>';
                           echo '</tr>';
                         }
