@@ -64,7 +64,7 @@ if (isset($_REQUEST['registrar']))
 		<nav style = "background-color: #FFC000;
 					 font-family: Bahnschrift SemiBold;
 					 text-align: center;
-					 font-size: 40px;" >
+					 font-size: auto;" >
 			<span class="navbar-brand mb-0 h1">AGENDAMENTO DE AVALIAÇÃO - CONFIRMAÇÃO</span>
 		</nav>
         <div class = "container" style = "width: 600px;

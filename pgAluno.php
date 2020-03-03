@@ -18,13 +18,30 @@ if ( mysqli_connect_errno())
 	die ('Failed to connect to MySQL: ' . mysqli_connect_error());
 }
 
-$stmt = $con->prepare('SELECT matricula, nome, identidade, cpf FROM alunos WHERE matricula = ?');
+$stmt = $con->prepare('SELECT nome, matricula, pagamento, ppagamento, dfisio FROM alunos WHERE matricula = ?');
 
 $stmt->bind_param('i', $_SESSION['matricula']);
 $stmt->execute();
-$stmt->bind_result($matricula, $nome, $identidade, $cpf);
+$stmt->bind_result($nome, $matricula, $pagamento, $ppagamento, $dfisio);
 $stmt->fetch();
 $stmt->close();
+
+date_default_timezone_set('America/Sao_Paulo');
+$data_atual = new DateTime();
+$data_atual = date_format($data_atual, 'Y-m-d');
+$data_atual = strtotime(str_replace('-','/', $data_atual));
+
+$dfisio = strtotime(str_replace('-','/', $dfisio));
+$dif_data = ($data_atual - $dfisio)/(86400*30);
+
+if ($dif_data > 6)
+{
+	$avaliacao = 'Marcar avaliação';
+}
+else
+{
+	$avaliacao = 'Avaliação em dia.';
+}
 
 ?>
 
@@ -41,7 +58,6 @@ $stmt->close();
 	{
 		padding: 0px 0px 5px 0px;
 		font-family: Bahnschrift Light;
-		color: #ffffff;
         font-size: 20px;
 	}
 	</style>
@@ -49,12 +65,13 @@ $stmt->close();
 		<nav style = "background-color: #FFC000;
 					 font-family: Bahnschrift SemiBold;
 					 text-align: center;
-					 font-size: 40px;" >
+					 font-size: auto;
+					 width: auto" >
 			<span class="navbar-brand mb-0 h1">ALUNO - PERFIL</span>
 		</nav>
-        <div class = "container" style = "width: 600px;
+        <div class = "container" style = "width: auto;
                       background-color: #FFC000;
-                      margin: 100px auto;
+                      margin: 50px auto;
                       border-radius: 30px;">
 				<table class="table table-borderless" style = "padding: 15px 20px 15px 20px;">
 					<tr>
@@ -63,28 +80,36 @@ $stmt->close();
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$_SESSION['matricula']?></td>
+						<td><?=$matricula?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Plano de Pagamento:</td>
-						<td>lalalalala</td>
+						<td><?=$pagamento?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Próximo Pagamento:</td>
-						<td>lalalalala</td>
+						<td><?=$ppagamento?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Avaliação Fisioterápica:</td>
-						<td>lalalalala</td>
+						<td><?=$avaliacao?></td>
 					</tr>
+					
 				</table>
         </div>
 		<div class="container">
-		<div style = "margin: -50px; width: auto" class="row justify-content-center">
+		<div style = "margin: -30px; width: auto" class="row justify-content-center">
 			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
-					type="button" class="btn">PRESENÇA EM AULA</button>
-			<button style = "width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
-					type="button" class="btn">HISTÓRICO DE PRESENÇA</button>
+                    type="button"
+                    onclick = "window.location.href='registraAluno.php'"
+                    class="btn">CORRIGIR</button>
+
+            <form method="$_REQUEST">
+            <input type = "submit" 
+                    name = "registrar"
+                    value = "CONFIRMAR"
+                    style = "border-color: transparent; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; font-size: 30px; border-radius: 15px;">
+            </form>
 		</div>
 		</div>
     <body>
