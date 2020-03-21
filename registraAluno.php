@@ -1,16 +1,6 @@
 <?php
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-mysqli_error($con); 
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
 
 if (isset($_POST['registrar']))
 {
@@ -38,8 +28,6 @@ if (isset($_POST['registrar']))
         $ppagamento->add(new DateInterval('P365D'));
         $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
     }
-    
-
     header('Location: confirmaRegAluno.php');
 }
 ?>
@@ -172,5 +160,6 @@ if (isset($_POST['registrar']))
                     style = "border-color: transparent; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; font-size: 30px; border-radius: 15px;">
         </div>
         </form>
+        
     <body>
 </html>

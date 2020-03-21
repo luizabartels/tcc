@@ -2,22 +2,12 @@
 
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-mysqli_error($con); 
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
 if (isset($_POST['registrar']))
 {
     $_SESSION['regavaliacao'] = TRUE;
 
     $_SESSION['matricula'] = $_POST['matricula_aluno'];
+    $_SESSION['sexo'] = $_POST['sexo_aluno'];
     $_SESSION['data'] = $_POST['data_avaliacao'];
     $_SESSION['etilismo'] = $_POST['etilismo_avaliacao'];
     $_SESSION['tabagismo'] = $_POST['tabagismo_avaliacao'];
@@ -108,6 +98,15 @@ if (isset($_POST['registrar']))
                             name = "matricula_aluno" 
                             placeholder = "Digite a matrícula do aluno" 
                             id = "matricula_aluno" required>
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">SEXO</span>
+                    </div>
+                    <input type = "text" 
+                            style = " font-family: Bahnschrift; font-size: auto; width: 50%; height: 50px; border: 1px solid #ffffff; margin: 5px 5px 5px 5px; padding: 0 10px; border-radius: 10px;"
+                            class="form-control" 
+                            name = "sexo_aluno" 
+                            placeholder = "M ou F" 
+                            id = "sexo_aluno" required>
                 </div>
 
                 <div class="input-group input-group-lg">

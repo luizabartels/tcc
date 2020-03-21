@@ -1,46 +1,35 @@
 <?php
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-//mysqli_error($con); 
-
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('extra/classes/bd.class.php');
+require('extra/classes/aula.class.php');
+banco_mysql::conn();
+$aula = new Aulas();
 
 if (!isset($_SESSION['regaula'])) {
 	header('Location: registraAula.php');
 	exit();
 }
-
-    $nome_aula = $_SESSION['nome_aula'];
-    $inicio_aula = $_SESSION['inicio_aula'];
-    $fim_aula = $_SESSION['fim_aula'];
-    $dias_aula = $_SESSION['dias_aula'];
-    $instrutor_aula = $_SESSION['instrutor_aula'];
-    $sala_aula = $_SESSION['sala_aula'];
+	$aula -> aula = $_SESSION['nome_aula'];
+	$aula -> inicio = $_SESSION['inicio_aula'];
+	$aula -> fim = $_SESSION['fim_aula'];
+	$aula -> dias = $_SESSION['dias_aula'];
+	$aula -> instrutor = $_SESSION['instrutor_aula'];
+	$aula -> sala = $_SESSION['sala_aula'];
 
 if (isset($_REQUEST['registrar']))
 {
-    //Adicionar comparação com itens do banco de dado.
+	$dados = array($aula -> aula,
+				  $aula -> inicio,
+				  $aula -> fim,
+				  $aula -> dias,
+				  $aula -> instrutor,
+				  $aula -> sala);
+	
+	if ($aula -> cadastraAula($dados)) echo '<script>alert("Aula cadastrada com sucesso")</script>';
+    else echo '<script>alert("Problemas ao cadastrar aula. Tente novamente.")</script>';
 
-    $sql = ("INSERT INTO `aula` (`aula`, `inicio`, `fim`, `dias`, `instrutor`, `sala`) VALUES ('$nome_aula', '$inicio_aula', '$fim_aula', '$dias_aula', ' $instrutor_aula', '$sala_aula')");
-    
-    if(mysqli_query($con, $sql))
-    {
-        header('Location: registraAula.php');
-    }
-    else
-    {
-        header('Location: pagError.php');
-    }
-
+	header('refresh:1; url=registraAula.php');
 }
 ?>
 
@@ -78,27 +67,27 @@ if (isset($_REQUEST['registrar']))
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Nome:</td>
-						<td><?=$nome_aula?></td>
+						<td><?=$_SESSION['nome_aula']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Início:</td>
-						<td><?=$inicio_aula?></td>
+						<td><?=$_SESSION['inicio_aula']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Fim:</td>
-						<td><?=$fim_aula?></td>
+						<td><?=$_SESSION['fim_aula']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Dias:</td>
-						<td><?=$dias_aula?></td>
+						<td><?=$_SESSION['dias_aula']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Instrutor:</td>
-						<td><?=$instrutor_aula?></td>
+						<td><?=$_SESSION['instrutor_aula']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Sala:</td>
-						<td><?=$sala_aula?></td>
+						<td><?=$_SESSION['sala_aula']?></td>
                     </tr>
                     <tr>
 						<td></td>

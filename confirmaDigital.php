@@ -3,23 +3,28 @@ session_start();
 
 require_once('extra/classes/bd.class.php');
 require('extra/classes/cliente.class.php');
+require('extra/classes/sensorbiometrico.class.php');
 banco_mysql::conn();
-$cliente = new Cliente();
+$usuario = new Cliente();
+$sensor = new SensorBiometrico();
 
-if (!isset($_SESSION['regavaliacao'])) {
-	header('Location: registraAvaliacao.php');
+if (!isset($_SESSION['regdigital'])) 
+{
+	header('Location: registraDigital.php');
 	exit();
 }
+    $usuario -> aluno_matricula = $_SESSION['aluno_matricula'];
+    
+    $output = $sensor -> autenticaDigital();
 
-	$cliente -> $aluno_matricula = $_SESSION['matricula'];
-	$cliente -> $aluno_dfisio = $_SESSION['data'];
-	$cliente -> $aluno_hfisio = $_SESSION['hora'];
-	$cliente -> $aluno_nome = $_SESSION['nome'];
+    if ($output == NULL) $usuario -> aluno_digital = '00000';
+    else if ($output != NULL) $usuario -> aluno_digital = $output;
 
-if (isset($_REQUEST['registrar']))
-{
-	$cliente -> agendamentoAvaliacao($cliente -> $aluno_matricula, $cliente -> $aluno_dfisio, $cliente -> $aluno_hfisio);
-}
+    if (isset($_REQUEST['registrar']))
+    {
+        $usuario -> cadastraDigital($usuario -> aluno_matricula, $usuario -> aluno_digital);
+        header('Location: pgRecepcao.php');
+    }
 ?>
 
 <DOCTYPE html>
@@ -42,8 +47,8 @@ if (isset($_REQUEST['registrar']))
 		<nav style = "background-color: #FFC000;
 					 font-family: Bahnschrift SemiBold;
 					 text-align: center;
-					 font-size: auto;" >
-			<span class="navbar-brand mb-0 h1">AGENDAMENTO DE AVALIAÇÃO - CONFIRMAÇÃO</span>
+					 font-size: 40px;" >
+			<span class="navbar-brand mb-0 h1">CADASTRO DE ALUNO - CONFIRMAÇÃO</span>
 		</nav>
         <div class = "container" style = "width: 600px;
                       background-color: #FFC000;
@@ -55,22 +60,14 @@ if (isset($_REQUEST['registrar']))
 						<td></td>
 					</tr>
 					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Aluno:</td>
-						<td><?=$nome?></td>
-					</tr>
-					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$matricula?></td>
+						<td><?=$usuario -> aluno_matricula?></td>
 					</tr>
 					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Data:</td>
-						<td><?=$data?></td>
+						<td style = "font-family: Bahnschrift SemiBold;">Digital:</td>
+						<td><?=$usuario -> aluno_digital?></td>
 					</tr>
-					<tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Hora:</td>
-						<td><?=$hora?></td>
-					</tr>
-                    <tr>
+				
 						<td></td>
 						<td></td>
 					</tr>
@@ -80,7 +77,7 @@ if (isset($_REQUEST['registrar']))
 		<div style = "margin: -30px; width: auto" class="row justify-content-center">
 			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
                     type="button"
-                    onclick = "window.location.href='registraAluno.php'"
+                    onclick = "window.location.href='registraDigital.php'"
                     class="btn">CORRIGIR</button>
 
             <form method="$_REQUEST">

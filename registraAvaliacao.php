@@ -2,14 +2,10 @@
 
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
 
 if (isset($_POST['registrar']))
 {
@@ -17,29 +13,13 @@ if (isset($_POST['registrar']))
     
     $_SESSION['regavaliacao'] = TRUE;
 
-    $matricula = $_POST['matricula_aluno'];
     $_SESSION['matricula'] = $_POST['matricula_aluno'];
     $rawdate = htmlentities($_POST['data_aluno']);
     $date = date('Y-m-d', strtotime($rawdate));
     $_SESSION['data'] = $date;
     $_SESSION['hora'] = $_POST['hora_aluno'];
-
-    $sql = "SELECT nome FROM alunos WHERE matricula = $matricula";
-
-    if($result = mysqli_query($con, $sql))
-    {
-     if(mysqli_num_rows($result) > 0)
-     {
-        while($row = mysqli_fetch_array($result))
-        {
-         $nome = $row['nome'];
-         $_SESSION['nome'] = $nome;
-
-         echo $nome;
-        }
-     }
-    }
-    
+    $_SESSION['nome'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[1];
+ 
     header('Location: confirmaMarcacaoAvaliacao.php');
 }
 

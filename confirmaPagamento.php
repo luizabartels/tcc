@@ -1,48 +1,89 @@
 <?php
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
-
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('extra/classes/bd.class.php');
+require('extra/classes/$cliente.class.php');
+banco_mysql::conn();
+$$cliente = new $cliente();
 
 if (!isset($_SESSION['regpagamento'])) {
 	header('Location: registraAula.php');
 	exit();
 }
-
-    $matricula = $_SESSION['matricula'];
-	$pagamento = $_SESSION['pagamento'];
-	$ppagamento = $_SESSION['ppagamento'];
+	$cliente -> $aluno_matricula = $_SESSION['matricula'];
+	$cliente -> $aluno_pagamento = $_SESSION['pagamento'];
+	$cliente -> $aluno_ppagamento = $_SESSION['ppagamento'];
+	$cliente -> $aluno_plano = $_SESSION['plano'];
+	$cliente -> $aluno_dferias = $_SESSION['dferias'];
+	$cliente -> $aluno_flagferias = $_SESSION['flagferias'];
+	
     $iferias = $_SESSION['iferias'];
 	$fferias = $_SESSION['fferias'];
-	$plano = $_SESSION['plano'];
+	
+
+	if ($iferias != NULL && $fferias != NULL)
+	{
+		$iferias = strtotime(str_replace('-','/', $iferias));
+		$fferias = strtotime(str_replace('-','/', $fferias));
+		$dif_data = ($fferias - $iferias)/86400;
+	}
+
 
 if (isset($_REQUEST['registrar']))
 {
-    //Adicionar comparação com itens do banco de dado.
-
-	$sql = ("UPDATE `alunos` SET `pagamento` = '$pagamento', `ppagamento` = '$ppagamento' WHERE `alunos`.`matricula` = $matricula");
+	if ($_SESSION['flag'] == 1) 
+	{
+		$cliente -> registraPagamento($cliente -> $aluno_matricula, $cliente -> $aluno_pagamento, $cliente -> $aluno_ppagamento);
+		header('Location: registraPagamento.php');
+	 }//só pagamento
 	
-	mysqli_query($con, $sql);
-    
-    if(mysqli_query($con, $sql))
-    {
-        header('Location: registraPagamento.php');
-    }
-    else
-    {
-        header('Location: pagError.php');
-    }
+	else if ($_SESSION['flag'] == 2)
+	{
+		if (($dif_data + $cliente -> $aluno_dferias) <= 30 && $cliente -> $aluno_flagferias < 3)
+		{
+			$cliente -> $aluno_flagferias = $cliente -> $aluno_flagferias + 1;
 
+			$cliente -> $aluno_dferias = $dif_data + $cliente -> $aluno_dferias;
+			$val = strval($cliente -> $aluno_dferias);
+			$p = 'P';
+			$d = 'D';
+
+			$date = date('Y-m-d', strtotime($cliente -> $aluno_ppagamento));
+			$cliente -> $aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+			$cliente -> $aluno_ppagamento ->add(new DateInterval($p.$val.$d));
+			$cliente -> $aluno_ppagamento = date_format($cliente -> $aluno_ppagamento, 'Y-m-d');
+
+			$cliente -> registraFerias($cliente -> $aluno_matricula, $cliente -> $aluno_dferias, $cliente -> $aluno_ppagamento, $cliente -> $aluno_flagferias);
+
+			header('Location: registraPagamento.php');
+		}
+		else echo '<script>alert("$cliente excedeu dias de férias ou parcelamento de dias.")</script>';
+	} //só férias
+
+	else if ($_SESSION['flag'] == 3)
+	{
+		$cliente -> registraPagamento($cliente -> $aluno_matricula, $cliente -> $aluno_pagamento, $cliente -> $aluno_ppagamento);
+		
+		if (($dif_data + $cliente -> $aluno_dferias) <= 30 && $cliente -> $aluno_flagferias < 3)
+		{
+			$cliente -> $aluno_flagferias = $cliente -> $aluno_flagferias + 1;
+
+			$cliente -> $aluno_dferias = $dif_data + $cliente -> $aluno_dferias;
+			$val = strval($cliente -> $aluno_dferias);
+			$p = 'P';
+			$d = 'D';
+
+			$date = date('Y-m-d', strtotime($cliente -> $aluno_ppagamento));
+			$cliente -> $aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+			$cliente -> $aluno_ppagamento ->add(new DateInterval($p.$val.$d));
+			$cliente -> $aluno_ppagamento = date_format($cliente -> $aluno_ppagamento, 'Y-m-d');
+
+			$cliente -> registraFerias($matricula, $dferias, $ppagamento, $flagferias);
+
+			header('Location: registraPagamento.php');
+		}
+		else echo '<script>alert("$cliente excedeu dias de férias ou parcelamento de dias.")</script>';
+	} //férias e pagamento
 }
 ?>
 
@@ -96,11 +137,11 @@ if (isset($_REQUEST['registrar']))
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Início de férias:</td>
-						<td><?=$iferias?></td>
+						<td><?=$_SESSION['iferias']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Fim de férias:</td>
-						<td><?=$fferias?></td>
+						<td><?=$_SESSION['fferias']?></td>
                     </tr>
                     <tr>
 						<td></td>
@@ -112,7 +153,7 @@ if (isset($_REQUEST['registrar']))
 		<div style = "margin: -30px; width: auto" class="row justify-content-center">
 			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
                     type="button"
-                    onclick = "window.location.href='registraAluno.php'"
+                    onclick = "window.location.href='registraPagamento.php'"
                     class="btn">CORRIGIR</button>
 
             <form method="$_REQUEST">

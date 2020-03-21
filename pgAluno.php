@@ -6,42 +6,32 @@ if (!isset($_SESSION['loggedin'])) {
 	header('Location: login.php');
 	exit();
 }
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
 
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
+$dados_aluno = array();
 
-if ( mysqli_connect_errno()) 
-{
-	die ('Failed to connect to MySQL: ' . mysqli_connect_error());
-}
+$dados_aluno = $cliente -> selecionaDadosCliente($_SESSION['matricula']);
 
-$stmt = $con->prepare('SELECT nome, matricula, pagamento, ppagamento, dfisio FROM alunos WHERE matricula = ?');
-
-$stmt->bind_param('i', $_SESSION['matricula']);
-$stmt->execute();
-$stmt->bind_result($nome, $matricula, $pagamento, $ppagamento, $dfisio);
-$stmt->fetch();
-$stmt->close();
+$cliente -> aluno_nome = $dados_aluno[0];
+$cliente -> aluno_matricula = $dados_aluno[1];
+$cliente -> aluno_pagamento = $dados_aluno[2];
+$cliente -> aluno_ppagamento = $dados_aluno[3]; 
+$cliente -> aluno_dfisio = $dados_aluno[4]; 
+$cliente -> aluno_plano = $dados_aluno[5];
 
 date_default_timezone_set('America/Sao_Paulo');
 $data_atual = new DateTime();
 $data_atual = date_format($data_atual, 'Y-m-d');
 $data_atual = strtotime(str_replace('-','/', $data_atual));
 
-$dfisio = strtotime(str_replace('-','/', $dfisio));
-$dif_data = ($data_atual - $dfisio)/(86400*30);
+$cliente -> aluno_dfisio = strtotime(str_replace('-','/', $cliente -> aluno_dfisio));
+$dif_data = ($data_atual - $cliente -> aluno_dfisio)/(86400*30);
 
-if ($dif_data > 6)
-{
-	$avaliacao = 'Marcar avaliação';
-}
-else
-{
-	$avaliacao = 'Avaliação em dia.';
-}
+if ($dif_data > 6) $avaliacao = 'Marcar avaliação';
+else $avaliacao = 'Avaliação em dia';
 
 ?>
 
@@ -76,19 +66,19 @@ else
 				<table class="table table-borderless" style = "padding: 15px 20px 15px 20px;">
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Nome:</td>
-						<td><?=$nome;?></td>
+						<td><?=$cliente -> aluno_nome;?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$matricula?></td>
+						<td><?=$cliente -> aluno_matricula?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Plano de Pagamento:</td>
-						<td><?=$pagamento?></td>
+						<td><?=$cliente -> aluno_plano?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Próximo Pagamento:</td>
-						<td><?=$ppagamento?></td>
+						<td><?=$cliente -> aluno_ppagamento?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Avaliação Fisioterápica:</td>
@@ -101,15 +91,13 @@ else
 		<div style = "margin: -30px; width: auto" class="row justify-content-center">
 			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
                     type="button"
-                    onclick = "window.location.href='registraAluno.php'"
-                    class="btn">CORRIGIR</button>
+                    onclick = "window.location.href='registraPresenca.php'"
+                    class="btn">REGISTRAR PRESENÇA</button>
 
-            <form method="$_REQUEST">
-            <input type = "submit" 
-                    name = "registrar"
-                    value = "CONFIRMAR"
-                    style = "border-color: transparent; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; font-size: 30px; border-radius: 15px;">
-            </form>
+			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
+            	    type="button"
+                    onclick = "window.location.href='historico.php'"
+                    class="btn">HISTÓRICO</button>
 		</div>
 		</div>
     <body>

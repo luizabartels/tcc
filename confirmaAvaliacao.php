@@ -1,66 +1,64 @@
 <?php
-
-/*
-* Calculos extraídos do site: https://www.cdof.com.br/protocolos1.htm
-*/
-
 session_start();
-
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
-
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('extra/classes/bd.class.php');
+require('extra/classes/avafisica.class.php');
+banco_mysql::conn();
+$ava = new Avaliacao();
+$dados = array();
 
 if (!isset($_SESSION['regavaliacao'])) {
 	header('Location: pgFisioAvaliacao.php');
 	exit();
 }
 
-$matricula = $_SESSION['matricula'];
-$data = $_SESSION['data'];
-$etilismo = $_SESSION['etilismo'];
-$tabagismo = $_SESSION['tabagismo'];
-$historico = $_SESSION['historico'];
-$cirurgias = $_SESSION['cirurgias'];
-$queixas = $_SESSION['queixas'];
-$triceps = $_SESSION['triceps'];
-$iliaca = $_SESSION['iliaca'];
-$peitoral = $_SESSION['peitoral'];
-$coxa = $_SESSION['coxa'];
-$abdome = $_SESSION['abdome'];
-$idade = $_SESSION['idade'];
-$repouso = $_SESSION['repouso'];
-$exercicio = $_SESSION['exercicio'];
-$pressao = $_SESSION['pressao'];
-$borg = $_SESSION['borg'];
-$relato = $_SESSION['relato'];
-$laudo = $_SESSION['laudo'];
+$ava -> matricula = $_SESSION['matricula'];
+$ava -> data = $_SESSION['data'];
+$ava -> sexo = $_SESSION['sexo'];
+$ava -> etilismo = $_SESSION['etilismo'];
+$ava -> tabagismo = $_SESSION['tabagismo'];
+$ava -> triceps = $_SESSION['triceps'];
+$ava -> iliaca = $_SESSION['iliaca'];
+$ava -> peitoral = $_SESSION['peitoral'];
+$ava -> coxa = $_SESSION['coxa'];
+$ava -> abdome = $_SESSION['abdome'];
+$ava -> idade = $_SESSION['idade'];
+$ava -> repouso = $_SESSION['repouso'];
+$ava -> exercicio = $_SESSION['exercicio'];
+$ava -> pressao = $_SESSION['pressao'];
+$ava -> borg = $_SESSION['borg'];
 
-$x1 = $triceps + $iliaca + $coxa + $peitoral + $abdome;
-$x2 = $idade;
+$dados = array($ava -> matricula, //0
+				$ava -> data, //1
+				$ava -> sexo, //2
+				$ava -> etilismo, //3
+				$ava -> tabagismo, //4
+				$_SESSION['historico'], //5
+				$_SESSION['cirurgias'], //6
+				$_SESSION['queixas'], //7
+				$ava -> triceps, //8
+				$ava -> iliaca, //9
+				$ava -> peitoral, //10
+				$ava -> coxa, //11
+				$ava -> abdome, //12
+				$ava -> idade, //13
+				$ava -> repouso, //14
+				$ava -> exercicio, //15
+				$ava -> pressao, //16
+				$ava -> borg, //17
+				$_SESSION['relato'], //18
+				$_SESSION['laudo'] //19
+				);
 
-$dc = 1.1093800 - 0.0008267 * $x1 + 0.0000016 * $x1 * $x1 - 0.0002574 * $x2;
-$g = ((4.95 / $dc) - 4.50) * 100;
+$indices = array($ava -> calculaProtocoloPollock($ava -> sexo, $ava -> idade, $ava -> triceps, $ava -> iliaca, $ava -> coxa, $ava -> peitoral, $ava -> abdome)[0],
+				 $ava -> calculaProtocoloPollock($ava -> sexo, $ava -> idade, $ava -> triceps, $ava -> iliaca, $ava -> coxa, $ava -> peitoral, $ava -> abdome)[1]);
+
 
 if (isset($_REQUEST['registrar']))
 {
-    //Adicionar comparação com itens do banco de dado.
-
-    $sql = ("INSERT INTO `avaliacao` 
-            (`matricula`, `data`, `etilismo`, `tabagismo`, `historico`, `cirurgias`, `queixas`, `triceps`, `iliaca`, `peitoral`, `coxa`, `abdome`, `idade`, `repouso`, `exercicio`, `pressao`, `borg`, `relato`, `laudo`) 
-            VALUES ('$matricula', '$data', '$etilismo', '$tabagismo', ' $historico', '$cirurgias', '$queixas', '$triceps', '$iliaca', '$peitoral', '$coxa', '$abdome', '$idade', '$repouso', '$exercicio', '$pressao', '$borg', '$relato', '$laudo')");
-    
-    mysqli_query($con, $sql);
-
-    header('Location: pgFisioterapeuta.php');
+	if ($ava -> registraAvaliacao($dados)) echo '<script>alert("Avaliação cadastrada com sucesso")</script>';
+	else echo '<script>alert("Problemas ao cadastrar avaliação. Tente novamente.")</script>';
+	
+	header('refresh:1; url=pgFisioterapeuta.php');
 }
 ?>
 
@@ -98,89 +96,93 @@ if (isset($_REQUEST['registrar']))
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$matricula?></td>
+						<td><?=$_SESSION['matricula']?></td>
+					</tr>
+					<tr>
+						<td style = "font-family: Bahnschrift SemiBold;">Sexo:</td>
+						<td><?=$_SESSION['sexo']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Data:</td>
-						<td><?=$data?></td>
+						<td><?=$_SESSION['data']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Etislismo:</td>
-						<td><?=$etilismo?></td>
+						<td><?=$_SESSION['etilismo']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Tabagismo:</td>
-						<td><?=$tabagismo?></td>
+						<td><?=$_SESSION['tabagismo']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Historico:</td>
-						<td><?=$historico?></td>
+						<td><?=$_SESSION['historico']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Cirurgias:</td>
-						<td><?=$cirurgias?></td>
+						<td><?=$_SESSION['cirurgias']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Queixas:</td>
-						<td><?=$queixas?></td>
+						<td><?=$_SESSION['queixas']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Triceps:</td>
-						<td><?=$triceps?></td>
+						<td><?=$_SESSION['triceps']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Iliaca:</td>
-						<td><?=$iliaca?></td>
+						<td><?=$_SESSION['iliaca']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Peitoral:</td>
-						<td><?=$peitoral?></td>
+						<td><?=$_SESSION['peitoral']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Coxa:</td>
-						<td><?=$coxa?></td>
+						<td><?=$_SESSION['coxa']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Abdome:</td>
-						<td><?=$abdome?></td>
+						<td><?=$_SESSION['abdome']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Idade:</td>
-						<td><?=$idade?></td>
+						<td><?=$_SESSION['idade']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Repouso:</td>
-						<td><?=$repouso?></td>
+						<td><?=$_SESSION['repouso']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Exercicio:</td>
-						<td><?=$exercicio?></td>
+						<td><?=$_SESSION['exercicio']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Pressao:</td>
-						<td><?=$pressao?></td>
+						<td><?=$_SESSION['pressao']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Borg:</td>
-						<td><?=$borg?></td>
+						<td><?=$_SESSION['borg']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Relato:</td>
-						<td><?=$relato?></td>
+						<td><?=$_SESSION['relato']?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Laudo:</td>
-						<td><?=$laudo?></td>
+						<td><?=$_SESSION['laudo']?></td>
                     </tr>
                     <tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Densidade Corporal:</td>
-						<td><?=$dc?></td>
+						<td><?=$indices[0]?></td>
                     </tr>
                     <tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Percentual de Gordura:</td>
-						<td><?=$g?></td>
+						<td><?=$indices[1]?></td>
                     </tr>
                     <tr>
 						<td></td>

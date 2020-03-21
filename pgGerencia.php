@@ -2,66 +2,17 @@
 
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
 
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con);
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-$cont = -1;
-$matricula = array();
-$nome = array();
-$identidade = array();
-$cpf = array();
-$endereco = array();
-$plano = array();
-$pagamento = array();
-$ppagamento = array();
+require_once __DIR__ . '/extra/libs/vendor/autoload.php';
 
 if (isset($_REQUEST['inadimplentes']))
 {
-	$sql = "SELECT nome, matricula, identidade, cpf, endereco, plano, pagamento, ppagamento FROM alunos ORDER BY ppagamento";
+	$cont = count($cliente -> listaInadimplentes());
 
-	date_default_timezone_set('America/Sao_Paulo');
-	$data_atual = new DateTime();
-	$data_atual = date_format($data_atual, 'Y-m-d');
-	$data_atual = strtotime(str_replace('-','/', $data_atual));
-	
-	if($result = mysqli_query($con, $sql))
-	{
-		if(mysqli_num_rows($result) > 0)
-		{
-		while($row = mysqli_fetch_array($result))
-		{
-			$prpagamento = $row['ppagamento'];
-			$prpagamento = strtotime(str_replace('-','/', $prpagamento));
-			$dif_data = ($data_atual - $prpagamento)/86400;
-
-			if($dif_data >= 0)
-			{
-				$cont++;
-
-				$ppagamento[$cont] = $row['ppagamento'];
-				$ppagamento[$cont] = strtotime(str_replace('-','/', $ppagamento[$cont]));
-			
-				$matricula[$cont] = $row['matricula'];
-				$nome[$cont] = $row["nome"];
-				$identidade[$cont] = $row["identidade"];
-				$cpf[$cont] = $row["cpf"];
-				$endereco[$cont] = $row["endereco"];
-				$plano[$cont] = $row["plano"];
-				$pagamento[$cont] = $row["pagamento"];
-				$ppagamento[$cont] = date('d-m-Y', $ppagamento[$cont]);
-			}
-			
-		}
-	}
-	}
 	$html = "<html>
 				  <body>
 					<table width='500' border='1' align='center' cellpadding='5' cellspacing='0'>
@@ -75,22 +26,18 @@ if (isset($_REQUEST['inadimplentes']))
 						<td width='165' align='center'>ÚLTIMO PAGAMENTO</td>
 						<td width='165' align='center'>PRÓXIMO PAGAMENTO</td>";
 
-	for ($i = 0; $i <= $cont; $i++ )
+	for ($i = 0; $i < $cont; $i++)
 	{
-		
-
 			$html .=  "<tr>
-								<td width='165' colspan='1'>" .$matricula[$i]. "</td>
-								<td width='165' colspan='1'>" .$nome[$i]. "</td>
-								<td width='165' colspan='1'>" .$identidade[$i]. "</td>
-								<td width='165' colspan='1'>" .$cpf[$i]. "</td>
-								<td width='165' colspan='1'>" .$endereco[$i]. "</td>
-								<td width='165' colspan='1'>" .$plano[$i]. "</td>
-								<td width='165' colspan='1'>" .$pagamento[$i]. "</td>
-								<td width='165' colspan='1'>" .$ppagamento[$i]. "</td>
-							</tr>";
-
-			
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][0]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][1]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][2]."</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][3]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][4]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][5]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][6]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaInadimplentes()[$i][7]. "</td>
+							</tr>";		
 	}
 
 	$html .= "</table></body></html>";
@@ -104,30 +51,7 @@ if (isset($_REQUEST['inadimplentes']))
 
 if (isset($_REQUEST['pagamento']))
 {
-	$sql = "SELECT nome, matricula, identidade, cpf, endereco, plano, pagamento, ppagamento FROM alunos ORDER BY ppagamento";
-
-	if($result = mysqli_query($con, $sql))
-	{
-		if(mysqli_num_rows($result) > 0)
-		{
-		while($row = mysqli_fetch_array($result))
-		{
-			$cont++;
-
-			$ppagamento[$cont] = $row['ppagamento'];
-			$ppagamento[$cont] = strtotime(str_replace('-','/', $ppagamento[$cont]));
-		
-			$matricula[$cont] = $row['matricula'];
-			$nome[$cont] = $row["nome"];
-			$identidade[$cont] = $row["identidade"];
-			$cpf[$cont] = $row["cpf"];
-			$endereco[$cont] = $row["endereco"];
-			$plano[$cont] = $row["plano"];
-			$pagamento[$cont] = $row["pagamento"];
-			$ppagamento[$cont] = date('d-m-Y', $ppagamento[$cont]);
-		}
-	}
-	}
+	$cont = count($cliente -> listaPagamento());
 
 	$html = "<html>
 				  <body>
@@ -142,22 +66,18 @@ if (isset($_REQUEST['pagamento']))
 						<td width='165' align='center'>ÚLTIMO PAGAMENTO</td>
 						<td width='165' align='center'>PRÓXIMO PAGAMENTO</td>";
 
-	for ($i = 0; $i <= $cont; $i++ )
+	for ($i = 0; $i < $cont; $i++)
 	{
-		
-
 			$html .=  "<tr>
-								<td width='165' colspan='1'>" .$matricula[$i]. "</td>
-								<td width='165' colspan='1'>" .$nome[$i]. "</td>
-								<td width='165' colspan='1'>" .$identidade[$i]. "</td>
-								<td width='165' colspan='1'>" .$cpf[$i]. "</td>
-								<td width='165' colspan='1'>" .$endereco[$i]. "</td>
-								<td width='165' colspan='1'>" .$plano[$i]. "</td>
-								<td width='165' colspan='1'>" .$pagamento[$i]. "</td>
-								<td width='165' colspan='1'>" .$ppagamento[$i]. "</td>
-							</tr>";
-
-			
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][0]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][1]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][2]."</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][3]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][4]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][5]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][6]. "</td>
+								<td width='165' colspan='1'>" .$cliente -> listaPagamento()[$i][7]. "</td>
+							</tr>";		
 	}
 
 	$html .= "</table></body></html>";
@@ -171,30 +91,7 @@ if (isset($_REQUEST['pagamento']))
 
 if (isset($_REQUEST['alfabetico']))
 {
-	$sql = "SELECT nome, matricula, identidade, cpf, endereco, plano, pagamento, ppagamento FROM alunos ORDER BY nome ASC";
-
-	if($result = mysqli_query($con, $sql))
-	{
-		if(mysqli_num_rows($result) > 0)
-		{
-		while($row = mysqli_fetch_array($result))
-		{
-			$cont++;
-
-			$ppagamento[$cont] = $row['ppagamento'];
-			$ppagamento[$cont] = strtotime(str_replace('-','/', $ppagamento[$cont]));
-		
-			$matricula[$cont] = $row['matricula'];
-			$nome[$cont] = $row["nome"];
-			$identidade[$cont] = $row["identidade"];
-			$cpf[$cont] = $row["cpf"];
-			$endereco[$cont] = $row["endereco"];
-			$plano[$cont] = $row["plano"];
-			$pagamento[$cont] = $row["pagamento"];
-			$ppagamento[$cont] = date('d-m-Y', $ppagamento[$cont]);
-		}
-	}
-	}
+	$cont = count($cliente -> listaAlfabetica());
 
 	$html = "<html>
 				  <body>
@@ -209,23 +106,19 @@ if (isset($_REQUEST['alfabetico']))
 						<td width='165' align='center'>ÚLTIMO PAGAMENTO</td>
 						<td width='165' align='center'>PRÓXIMO PAGAMENTO</td>";
 
-	for ($i = 0; $i <= $cont; $i++ )
-	{
-		
-
-			$html .=  "<tr>
-								<td width='165' colspan='1'>" .$matricula[$i]. "</td>
-								<td width='165' colspan='1'>" .$nome[$i]. "</td>
-								<td width='165' colspan='1'>" .$identidade[$i]. "</td>
-								<td width='165' colspan='1'>" .$cpf[$i]. "</td>
-								<td width='165' colspan='1'>" .$endereco[$i]. "</td>
-								<td width='165' colspan='1'>" .$plano[$i]. "</td>
-								<td width='165' colspan='1'>" .$pagamento[$i]. "</td>
-								<td width='165' colspan='1'>" .$ppagamento[$i]. "</td>
-							</tr>";
-
-			
-	}
+	for ($i = 0; $i < $cont; $i++)
+		{
+				$html .=  "<tr>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][0]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][1]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][2]."</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][3]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][4]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][5]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][6]. "</td>
+									<td width='165' colspan='1'>" .$cliente -> listaAlfabetica()[$i][7]. "</td>
+								</tr>";		
+		}
 
 	$html .= "</table></body></html>";
 

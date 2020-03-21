@@ -2,14 +2,10 @@
 
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
 
 if (isset($_POST['registrar']))
 {
@@ -17,49 +13,70 @@ if (isset($_POST['registrar']))
     
     $_SESSION['regpagamento'] = TRUE;
 
-    $matricula = $_POST['matricula_aluno'];
+    $_SESSION['matricula'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[0];
+    $_SESSION['plano'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[5];
+    $_SESSION['dferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[6];
+    $_SESSION['flagferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[7];
 
-    $_SESSION['matricula'] = $_POST['matricula_aluno'];
-    $_SESSION['iferias'] = $_POST['inicio_ferias'];
-    $_SESSION['fferias'] = $_POST['fim_ferias'];
-
-    $rawdate = htmlentities($_POST['pagamento_aluno']);
-    $date = date('Y-m-d', strtotime($rawdate));
-    $_SESSION['pagamento'] = $date;
-   
-    $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
-    
-
-    $sql = "SELECT plano FROM alunos WHERE matricula = $matricula";
-
-    if($result = mysqli_query($con, $sql))
+    if ($_POST['inicio_ferias'] == NULL && $_POST['pagamento_aluno'] != NULL)
     {
-     if(mysqli_num_rows($result) > 0)
-     {
-        while($row = mysqli_fetch_array($result))
-        {
-         $plano = $row['plano'];
-         $_SESSION['plano'] = $plano;
-        }
-     }
-    }
-
-    if(strcmp($plano,"Mensal") == 0)
-    {
-        $ppagamento->add(new DateInterval('P30D'));
-        $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
-    }
-    else
-    {
-        $ppagamento->add(new DateInterval('P365D'));
-        $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
-
+        $_SESSION['iferias'] = NULL;
+        $_SESSION['fferias'] = NULL;
+        $_SESSION['flag'] = 1;
         
-    }
+        $rawdate = htmlentities($_POST['pagamento_aluno']);
+        $date = date('Y-m-d', strtotime($rawdate));
+        $_SESSION['pagamento'] = $date;
+        $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
 
-    
-    
-    header('Location: confirmaPagamento.php');
+        if(strcmp($_SESSION['plano'],"Mensal") == 0)
+        {
+            $ppagamento->add(new DateInterval('P30D'));
+            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+        }
+        else
+        {
+            $ppagamento->add(new DateInterval('P365D'));
+            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+        }
+        header('Location: confirmaPagamento.php');
+    } //fim se não preencheu férias, independente do plano.
+    else if ($_POST['pagamento_aluno'] == NULL && $_POST['inicio_ferias'] != NULL)
+    {
+        if (strcmp($_SESSION['plano'],"Mensal") != 0)
+        {
+            $_SESSION['flag'] = 2;
+            $_SESSION['pagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[2];;
+            $_SESSION['ppagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[3];;
+
+            $_SESSION['iferias'] = $_POST['inicio_ferias'];
+            $_SESSION['fferias'] = $_POST['fim_ferias'];
+
+            header('Location: confirmaPagamento.php');
+        }
+        else echo '<script>alert("Usuário mensalista")</script>';
+    } //fim se não preencheu pagamento, dependente do plano
+    else if ($_POST['pagamento_aluno'] != NULL && $_POST['inicio_ferias'] != NULL)
+    {
+        if (strcmp($_SESSION['plano'],"Mensal") != 0)
+        {
+            $_SESSION['flag'] = 3;
+            $_SESSION['iferias'] = $_POST['inicio_ferias'];
+            $_SESSION['fferias'] = $_POST['fim_ferias'];
+
+            $rawdate = htmlentities($_POST['pagamento_aluno']);
+            $date = date('Y-m-d', strtotime($rawdate));
+            $_SESSION['pagamento'] = $date;
+
+            $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+            $ppagamento->add(new DateInterval('P365D'));
+            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+
+            header('Location: confirmaPagamento.php');
+        }
+        else echo '<script>alert("Usuário mensalista")</script>';
+    } //fim se preencheu pagamento e férias, dependente do plano
+
 }
 
 ?>

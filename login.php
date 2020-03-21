@@ -8,15 +8,15 @@
     <style>
     ::placeholder { color: #bfbfbf; }
     </style>
-    <body style = "background-color: black; overflow: hidden;">
+    <body style = "background-color: black; overflow: auto;">
         <div style = "width: 300px;
                       background-color: #FFC000;
-                      margin: 200px auto;
+                      margin: 150px auto;
                       border-radius: 30px;">
             <h1 style = 
                         "font-family: Bahnschrift Light; 
                         text-align: center;
-                        color: #ffffff;
+                        color: black;
                         font-size: 40px;
                         padding: 30px 0 0px 0;">ACESSO</h1>
             <form style = "display: flex;
@@ -34,6 +34,7 @@
                                 padding: 0 15px;
                                 border-radius: 10px;"
                        name = "matricula" placeholder = "Digite sua matrícula" id = "matricula" required>
+            </form>
         </div>
     <body>
 </html>

@@ -60,6 +60,24 @@
 								font-size: 30px;
 								border-radius: 15px;"
 						type="button" 
+						onclick = "window.location.href='registraDigital.php'"
+						class="btn">CADASTRAR DIGITAL
+						</button>
+			</div>
+			</div>
+			<div style = "width: auto;
+						background-color: #FFC000;
+						margin: 10px auto;
+						border-radius: 30px;"
+				class="container">
+			<div class="row justify-content-center">
+				<button style = "width: 600px;
+								height: 100px;
+								background-color: #FFC000;
+								font-family: Bahnschrift SemiBold;
+								font-size: 30px;
+								border-radius: 15px;"
+						type="button" 
 						onclick = "window.location.href='registraInstrutor.php'"
 						class="btn">CADASTRAR INSTRUTORES
 						</button>

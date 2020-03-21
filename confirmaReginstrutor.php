@@ -1,37 +1,30 @@
 <?php
 session_start();
-
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
-
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('extra/classes/bd.class.php');
+require('extra/classes/instrutor.class.php');
+banco_mysql::conn();
+$instrutor = new Instrutores();
 
 if (!isset($_SESSION['reginstrutor'])) {
 	header('Location: registraInstrutor.php');
 	exit();
 }
-    $instrutor_nome = $_SESSION['instrutor_nome'];
-    $instrutor_identidade = $_SESSION['instrutor_identidade'];
-    $instrutor_cpf = $_SESSION['instrutor_cpf'];
-    $instrutor_atividade = $_SESSION['instrutor_atividade'];
+    $instrutor -> nome = $_SESSION['instrutor_nome'];
+    $instrutor -> identidade = $_SESSION['instrutor_identidade'];
+    $instrutor -> cpf = $_SESSION['instrutor_cpf'];
+    $instrutor -> atividades = $_SESSION['instrutor_atividade'];
 
 if (isset($_REQUEST['registrar']))
 {
-    //Adicionar comparação com itens do banco de dado.
+	$dados = array($instrutor -> nome,
+				   $instrutor -> identidade,
+				   $instrutor -> cpf,
+				   $instrutor -> atividades);
 
-    $sql = ("INSERT INTO `instrutores` (`nome`, `identidade`, `cpf`, `atividades`) VALUES ('$instrutor_nome', '$instrutor_identidade', '$instrutor_cpf', '$instrutor_atividade')");
-    
-    mysqli_query($con, $sql);
+	if ($instrutor -> cadastraInstrutor($dados)) echo '<script>alert("Instrutor cadastrado com sucesso")</script>';
+    else echo '<script>alert("CPF repetido")</script>';
 
-    header('Location: registraInstrutor.php');
+	header('refresh:1; url=registraInstrutor.php');
 }
 ?>
 
@@ -69,19 +62,19 @@ if (isset($_REQUEST['registrar']))
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Nome:</td>
-						<td><?=$instrutor_nome?></td>
+						<td><?=$_SESSION['instrutor_nome']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Identidade:</td>
-						<td><?=$instrutor_identidade?></td>
+						<td><?=$_SESSION['instrutor_identidade']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">CPF:</td>
-						<td><?=$instrutor_cpf?></td>
+						<td><?=$_SESSION['instrutor_cpf']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Atividades:</td>
-						<td><?=$instrutor_atividade?></td>
+						<td><?=$_SESSION['instrutor_atividade']?></td>
                     </tr>
 						<td></td>
 						<td></td>

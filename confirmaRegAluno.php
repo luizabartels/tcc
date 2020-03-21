@@ -1,43 +1,40 @@
 <?php
 session_start();
 
-$DATABASE_HOST = 'localhost';
-$DATABASE_USER = 'root';
-$DATABASE_PASS = '';
-$DATABASE_NAME = 'academia';
-
-$con = mysqli_connect($DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_NAME);
-
-mysqli_error($con); 
-
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
 
 if (!isset($_SESSION['regaluno'])) 
 {
 	header('Location: registraAluno.php');
 	exit();
 }
-    $aluno_matricula = $_SESSION['aluno_matricula'];
-    $aluno_nome = $_SESSION['aluno_nome'];
-    $aluno_identidade = $_SESSION['aluno_identidade'];
-    $aluno_cpf = $_SESSION['aluno_cpf'];
-    $aluno_endereco = $_SESSION['aluno_endereco'];
-	$aluno_plano = $_SESSION['aluno_plano'];
-	$pagamento = $_SESSION['pagamento'];
-	$ppagamento = $_SESSION['ppagamento'];
+	$cliente -> aluno_matricula = $_SESSION['aluno_matricula'];
+	$cliente -> aluno_nome = $_SESSION['aluno_nome'];
+	$cliente -> aluno_identidade = $_SESSION['aluno_identidade'];
+	$cliente -> aluno_cpf = $_SESSION['aluno_cpf'];
+	$cliente -> aluno_endereco = $_SESSION['aluno_endereco'];
+	$cliente -> aluno_plano = $_SESSION['aluno_plano'];
+	$cliente -> aluno_pagamento = $_SESSION['pagamento'];
+	$cliente -> aluno_ppagamento = $_SESSION['ppagamento'];
 
 if (isset($_REQUEST['registrar']))
 {
-    //Adicionar comparação com itens do banco de dado.
+	$dados = array($cliente -> aluno_matricula, 
+				   $cliente -> aluno_nome, 
+				   $cliente -> aluno_identidade, 
+				   $cliente -> aluno_cpf, 
+				   $cliente -> aluno_endereco, 
+				   $cliente -> aluno_plano, 
+				   $cliente -> aluno_pagamento, 
+				   $cliente -> aluno_ppagamento);
 
-    $sql = ("INSERT INTO `alunos` (`matricula`, `nome`, `identidade`, `cpf`, `endereco`, `plano`, `pagamento`, `ppagamento`) 
-	VALUES ('$aluno_matricula', '$aluno_nome', '$aluno_identidade', '$aluno_cpf', ' $aluno_endereco', '$aluno_plano', '$pagamento', '$ppagamento')");
-    
-    mysqli_query($con, $sql);
+    if ($cliente -> cadastrarUsuario($dados)) echo '<script>alert("Usuário cadastrado com sucesso")</script>';
+    else echo '<script>alert("Matrícula ou CPF repetidos")</script>';
 
-    header('Location: registraAluno.php');
+	header('refresh:1; url=registraAluno.php');
 }
 ?>
 
@@ -71,46 +68,40 @@ if (isset($_REQUEST['registrar']))
                 <table class="table table-borderless" style = "padding: 15px 20px 15px 20px;">
                     <tr>
 						<td></td>
-						<td></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Nome:</td>
-						<td><?=$aluno_nome?></td>
+						<td><?=$cliente -> aluno_nome?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$aluno_matricula?></td>
+						<td><?=$cliente -> aluno_matricula?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Identidade:</td>
-						<td><?=$aluno_identidade?></td>
+						<td><?=$cliente -> aluno_identidade?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">CPF:</td>
-						<td><?=$aluno_cpf?></td>
+						<td><?=$cliente -> aluno_cpf?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Endereço:</td>
-						<td><?=$aluno_endereco?></td>
+						<td><?=$cliente -> aluno_endereco?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Plano:</td>
-						<td><?=$aluno_plano?></td>
+						<td><?=$cliente -> aluno_plano?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Data de Pagamento:</td>
-						<td><?=$pagamento?></td>
+						<td><?=$cliente -> aluno_pagamento?></td>
                     </tr>
                     <tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Renovação:</td>
-						<td><?=$ppagamento?></td>
+						<td><?=$cliente -> aluno_ppagamento?></td>
                     </tr>
                     <tr>
-						<td style = "font-family: Bahnschrift SemiBold;">Digital:</td>
-						<td><?=$_SESSION['aluno_matricula']?></td>
-                    </tr>
-                    <tr>
-						<td></td>
 						<td></td>
 					</tr>
 				</table>
