@@ -33,4 +33,4 @@ Importe o banco de dados academia.sql presente [aqui](https://github.com/luizaba
 ---
 ## Direitos Autorais
 
-[![BYNCND](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org)
+[![BYNCND](https://github.com/luizabartels/tcc/blob/master/documenta%C3%A7%C3%A3o/Oficial/Diagrama_componentes.jpg)](https://creativecommons.org)
