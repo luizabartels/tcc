@@ -6,7 +6,7 @@
 Repositório para armazenamento e avaliação do desenvolvimento do Trabalho de Conclusão de Curso da pós-graduação Lato Sensu em Engenharia de Software pela Pontifícia Universidade Católica de Minas Gerais
 
 ---
-## 1. Configurações Necessárias
+## 1. Configurações do Servidor
 
 Acesse o site e [faça download do software XAMPP](https://www.apachefriends.org/index.html).
 
@@ -28,9 +28,13 @@ Acesse o site [phpMyAdmin](http://localhost/phpmyadmin/).
 Importe o banco de dados academia.sql presente [aqui](https://github.com/luizabartels/tcc/tree/master/extra/DB_exported).
 
 ---
-## 3.
+## 3. Emulador do sensor biométrico
+
+Instale o Python 3 para a versão do sistema operacional que esteja usando.
+
+Caso esteja utilizando Windows, baixe um emulador de portas serial como [este](https://freevirtualserialports.com/).
 
 ---
 ## Direitos Autorais
 
-[![BYNCND](https://github.com/luizabartels/tcc/blob/master/documenta%C3%A7%C3%A3o/Oficial/Diagrama_componentes.jpg)](https://creativecommons.org)
+[![BYNCND](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org)
