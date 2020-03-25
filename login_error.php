@@ -22,15 +22,24 @@ $presenca -> data = $_SESSION['data'];
 
 if (isset($_REQUEST['matricula']))
 {
-  $dados = array($usuario -> selecionaDadosCliente($_REQUEST['matricula'])[0],
-                 $presenca -> aula,
-                 $presenca -> inicio,
-                 $presenca -> data);
+    if($_SESSION['aula_dia'] == true)
+    {
+        $dados = array($usuario -> selecionaDadosCliente($_REQUEST['matricula'])[0],
+        $presenca -> aula,
+        $presenca -> inicio,
+        $presenca -> data);
 
-  if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
-  else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
+        if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
+        else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
+
+        //header('refresh:1; url=pgAluno.php');
+    } 
+    else 
+    {
+        echo '<script>alert("Esta aula não ocorrerá hoje.")</script>';
+        //header('refresh:1; url=pgAluno.php');
+    }
   
-  header('refresh:1; url=pgAluno.php');
 }
 
 ?>

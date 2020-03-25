@@ -18,6 +18,6 @@ ser.open()
 command = b'\x00'
 
 while True:
-    ser.write(b"A")
+    ser.write(b"B")
     #print ("A")
     #time.sleep(100)

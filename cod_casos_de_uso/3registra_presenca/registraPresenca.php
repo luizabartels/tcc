@@ -13,7 +13,6 @@ $presenca = new Presenca();
 $sensor = new SensorBiometrico();
 
 $cont = count($aulas -> procuraAula());
-$aula_dia = false;
 
 if (isset($_REQUEST['confirmar']))
 {
@@ -22,11 +21,6 @@ if (isset($_REQUEST['confirmar']))
   $_SESSION['inicio'] = $_REQUEST['inicio_aula'];
   $_SESSION['aula'] = $_REQUEST['aula'];
 
-  for ($j = 0; $j < $cont; $j++)
-  {
-      if ($_SESSION['aula'] == $aulas -> procuraAula()[$j][0]) $aula_dia = true;
-  }
-
   /* DIGITAL */
 
   $output = $sensor -> autenticaDigital();
@@ -34,32 +28,26 @@ if (isset($_REQUEST['confirmar']))
   if ($output == NULL)
   {
     $_SESSION['presenca'] = TRUE;
-    $_SESSION['aula_dia'] = $aula_dia;
-
+    
     header('Location: login_error.php');
   }
   else if ($output != NULL)
   {
+    $presenca -> aula =  $_SESSION['aula'];
+    $presenca -> inicio = $_SESSION['inicio'];
+    $presenca -> data = $_SESSION['data'];
+    $matricula = $usuario -> selecionaDigital($output);
 
-    if ($aula_dia == true)
+    if ($_SESSION['matricula'] == $matricula)
     {
-      $presenca -> aula =  $_SESSION['aula'];
-      $presenca -> inicio = $_SESSION['inicio'];
-      $presenca -> data = $_SESSION['data'];
-      $matricula = $usuario -> selecionaDigital($output);
+      $dados = array($matricula,
+                  $presenca -> aula,
+                  $presenca -> inicio,
+                  $presenca -> data);
 
-      if ($_SESSION['matricula'] == $matricula)
-      {
-        $dados = array($matricula,
-                    $presenca -> aula,
-                    $presenca -> inicio,
-                    $presenca -> data);
-
-        if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
-        else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
-      } else echo '<script>alert("Digital de outro usuário.")</script>';
-    }
-    else echo '<script>alert("Esta aula não ocorrerá hoje.")</script>';
+      if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
+      else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
+    } else echo '<script>alert("Digital de outro usuário.")</script>';
   }
 }
 

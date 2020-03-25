@@ -35,9 +35,6 @@ Instale o Python 3 para a versão do sistema operacional que esteja usando.
 Caso esteja utilizando Windows, baixe um emulador de portas serial como [este](https://freevirtualserialports.com/).
 
 ---
-Copie e cole os itens deste repositório dentro da pasta htdocs do Xampp e acesse a aplicação através do localhost.
-
----
 ## Direitos Autorais
 
 [![BYNCND](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org)
