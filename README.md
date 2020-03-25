@@ -25,7 +25,7 @@ Aperte "Start" para os itens Apache e MySQL.
 
 Acesse o site [phpMyAdmin](http://localhost/phpmyadmin/).
 
-Importe o banco de dados academia.sql presente neste repositório.
+Importe o banco de dados academia.sql presente [aqui](https://github.com/luizabartels/tcc/tree/master/extra/DB_exported).
 
 ---
 ## 3.
