@@ -33,4 +33,4 @@ Importe o banco de dados academia.sql presente neste repositório.
 ---
 ## Direitos Autorais
 
-[(https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org)
+[![BYNCND](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org)
