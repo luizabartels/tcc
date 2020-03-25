@@ -31,6 +31,6 @@ Importe o banco de dados academia.sql presente neste repositório.
 ## 3.
 
 ---
-## License
+## Direitos Autorais
 
-[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![CC0](https://mirrors.creativecommons.org/presskit/buttons/80x15/svg/by-nc-nd.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
