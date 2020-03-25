@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-require_once('extra/classes/bd.class.php');
-require('extra/classes/cliente.class.php');
-banco_mysql::conn();
-$cliente = new Cliente();
-
 if (!isset($_SESSION['regavaliacao'])) {
 	header('Location: registraAvaliacao.php');
 	exit();
 }
+
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
 
 	$cliente -> $aluno_matricula = $_SESSION['matricula'];
 	$cliente -> $aluno_dfisio = $_SESSION['data'];

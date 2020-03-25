@@ -1,18 +1,20 @@
 <?php
 session_start();
-require_once('extra/classes/bd.class.php');
-require('extra/classes/instrutor.class.php');
-banco_mysql::conn();
-$instrutor = new Instrutores();
 
 if (!isset($_SESSION['reginstrutor'])) {
 	header('Location: registraInstrutor.php');
 	exit();
 }
-    $instrutor -> nome = $_SESSION['instrutor_nome'];
-    $instrutor -> identidade = $_SESSION['instrutor_identidade'];
-    $instrutor -> cpf = $_SESSION['instrutor_cpf'];
-    $instrutor -> atividades = $_SESSION['instrutor_atividade'];
+
+require_once('extra/classes/bd.class.php');
+require('extra/classes/instrutor.class.php');
+banco_mysql::conn();
+$instrutor = new Instrutores();
+
+$instrutor -> nome = $_SESSION['instrutor_nome'];
+$instrutor -> identidade = $_SESSION['instrutor_identidade'];
+$instrutor -> cpf = $_SESSION['instrutor_cpf'];
+$instrutor -> atividades = $_SESSION['instrutor_atividade'];
 
 if (isset($_REQUEST['registrar']))
 {

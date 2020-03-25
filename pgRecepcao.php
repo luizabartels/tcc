@@ -1,4 +1,14 @@
 <?php
+
+session_start();
+
+if (!isset($_SESSION['loggedinRecepcao'])) {
+	header('Location: login.php');
+	exit();
+}
+
+$_SESSION['Recepcao'] = TRUE;
+
 ?>
 
 <DOCTYPE html>

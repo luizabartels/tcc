@@ -19,3 +19,5 @@ command = b'\x00'
 
 while True:
     ser.write(b"A")
+    #print ("A")
+    #time.sleep(100)

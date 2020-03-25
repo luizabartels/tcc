@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['Recepcao'])) {
+	header('Location: pgRecepcao.php');
+	exit();
+}
+
+
 if (isset($_POST['registrar']))
 {
     $_SESSION['regaula'] = TRUE;

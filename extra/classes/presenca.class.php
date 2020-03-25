@@ -56,9 +56,8 @@
 
         public function procuraPresenca($matricula)
         {
-            $sqlInserir = "INSERT INTO `presenca` (`matricula`, `aula`, `inicio`, `data`) 
-                            VALUES ('$dados[0]', '$dados[1]', '$dados[2]', '$dados[3]')";
-            $selecionar = self::conn()->prepare($sqlInserir);
+            $sqlSelecionar = "SELECT `matricula`, `aula`, `inicio`, `data` FROM `presenca`";
+            $selecionar = self::conn()->prepare($sqlSelecionar);
             $selecionar -> execute();
 
             $dadosPresenca = array();

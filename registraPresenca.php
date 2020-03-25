@@ -33,20 +33,22 @@ if (isset($_REQUEST['confirmar']))
   }
   else if ($output != NULL)
   {
-    $data = new DateTime();
-    $_SESSION['data'] = date_format($data, 'Y-m-d');
-    $_SESSION['inicio'] = $_REQUEST['inicio_aula'];
-    $_SESSION['aula'] = $_REQUEST['aula'];
+    $presenca -> aula =  $_SESSION['aula'];
+    $presenca -> inicio = $_SESSION['inicio'];
+    $presenca -> data = $_SESSION['data'];
+    $matricula = $usuario -> selecionaDigital($output);
 
-    $dados = array($usuario -> selecionaDigital($output),
-                  $_SESSION['aula'],
-                  $_SESSION['data'],
-                  $_SESSION['inicio']);
-    
-    if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
-    else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
+    if ($_SESSION['matricula'] == $matricula)
+    {
+      $dados = array($matricula,
+                  $presenca -> aula,
+                  $presenca -> inicio,
+                  $presenca -> data);
 
-    }
+      if ($presenca -> cadastraPresenca($dados)) echo '<script>alert("Presença cadastrada com sucesso")</script>';
+      else echo '<script>alert("Problemas ao cadastrar presença. Tente novamente.")</script>';
+    } else echo '<script>alert("Digital de outro usuário.")</script>';
+  }
 }
 
 ?>

@@ -2,6 +2,11 @@
 
 session_start();
 
+if (!isset($_SESSION['Recepcao'])) {
+	header('Location: pgRecepcao.php');
+	exit();
+}
+
 require_once('extra/classes/bd.class.php');
 require('extra/classes/cliente.class.php');
 banco_mysql::conn();
@@ -13,70 +18,77 @@ if (isset($_POST['registrar']))
     
     $_SESSION['regpagamento'] = TRUE;
 
-    $_SESSION['matricula'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[0];
-    $_SESSION['plano'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[5];
-    $_SESSION['dferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[6];
-    $_SESSION['flagferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[7];
+    if (count($cliente -> selecionaDadosCliente($_POST['matricula_aluno'])) == 0) echo '<script>alert("Cliente inexistente.")</script>';
 
-    if ($_POST['inicio_ferias'] == NULL && $_POST['pagamento_aluno'] != NULL)
+    else
     {
-        $_SESSION['iferias'] = NULL;
-        $_SESSION['fferias'] = NULL;
-        $_SESSION['flag'] = 1;
-        
-        $rawdate = htmlentities($_POST['pagamento_aluno']);
-        $date = date('Y-m-d', strtotime($rawdate));
-        $_SESSION['pagamento'] = $date;
-        $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+        $_SESSION['matricula'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[0];
+        $_SESSION['plano'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[5];
+        $_SESSION['dferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[6];
+        $_SESSION['flagferias'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[7];
 
-        if(strcmp($_SESSION['plano'],"Mensal") == 0)
-        {
-            $ppagamento->add(new DateInterval('P30D'));
-            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
-        }
-        else
-        {
-            $ppagamento->add(new DateInterval('P365D'));
-            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
-        }
-        header('Location: confirmaPagamento.php');
-    } //fim se não preencheu férias, independente do plano.
-    else if ($_POST['pagamento_aluno'] == NULL && $_POST['inicio_ferias'] != NULL)
-    {
-        if (strcmp($_SESSION['plano'],"Mensal") != 0)
-        {
-            $_SESSION['flag'] = 2;
-            $_SESSION['pagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[2];;
-            $_SESSION['ppagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[3];;
 
-            $_SESSION['iferias'] = $_POST['inicio_ferias'];
-            $_SESSION['fferias'] = $_POST['fim_ferias'];
-
-            header('Location: confirmaPagamento.php');
-        }
-        else echo '<script>alert("Usuário mensalista")</script>';
-    } //fim se não preencheu pagamento, dependente do plano
-    else if ($_POST['pagamento_aluno'] != NULL && $_POST['inicio_ferias'] != NULL)
-    {
-        if (strcmp($_SESSION['plano'],"Mensal") != 0)
+        if ($_POST['inicio_ferias'] == NULL && $_POST['pagamento_aluno'] != NULL)
         {
-            $_SESSION['flag'] = 3;
-            $_SESSION['iferias'] = $_POST['inicio_ferias'];
-            $_SESSION['fferias'] = $_POST['fim_ferias'];
-
+            $_SESSION['iferias'] = NULL;
+            $_SESSION['fferias'] = NULL;
+            
+            $_SESSION['flag'] = 1;
+            
             $rawdate = htmlentities($_POST['pagamento_aluno']);
             $date = date('Y-m-d', strtotime($rawdate));
             $_SESSION['pagamento'] = $date;
-
             $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
-            $ppagamento->add(new DateInterval('P365D'));
-            $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
 
+            if(strcmp($_SESSION['plano'],"Mensal") == 0)
+            {
+                $ppagamento->add(new DateInterval('P30D'));
+                $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+            }
+            else
+            {
+                $ppagamento->add(new DateInterval('P365D'));
+                $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+            }
             header('Location: confirmaPagamento.php');
-        }
-        else echo '<script>alert("Usuário mensalista")</script>';
-    } //fim se preencheu pagamento e férias, dependente do plano
+        } //fim se não preencheu férias, independente do plano.
+        else if ($_POST['pagamento_aluno'] == NULL && $_POST['inicio_ferias'] != NULL)
+        {
+            if (strcmp($_SESSION['plano'],"Mensal") != 0)
+            {
+                $_SESSION['flag'] = 2;
+                $_SESSION['pagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[2];;
+                $_SESSION['ppagamento'] = $cliente -> selecionaDadosCliente($_POST['matricula_aluno'])[3];;
 
+                $_SESSION['iferias'] = $_POST['inicio_ferias'];
+                $_SESSION['fferias'] = $_POST['fim_ferias'];
+
+                header('Location: confirmaPagamento.php');
+            }
+            else echo '<script>alert("Usuário mensalista")</script>';
+        } //fim se não preencheu pagamento, dependente do plano
+        else if ($_POST['pagamento_aluno'] != NULL && $_POST['inicio_ferias'] != NULL)
+        {
+            if (strcmp($_SESSION['plano'],"Mensal") != 0)
+            {
+                $_SESSION['flag'] = 3;
+                $_SESSION['iferias'] = $_POST['inicio_ferias'];
+                $_SESSION['fferias'] = $_POST['fim_ferias'];
+
+                $rawdate = htmlentities($_POST['pagamento_aluno']);
+                $date = date('Y-m-d', strtotime($rawdate));
+                $_SESSION['pagamento'] = $date;
+
+                $ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+                $ppagamento->add(new DateInterval('P365D'));
+                $_SESSION['ppagamento'] = date_format($ppagamento, 'Y-m-d');
+
+                header('Location: confirmaPagamento.php');
+            }
+            else echo '<script>alert("Usuário mensalista")</script>';
+        } //fim se preencheu pagamento e férias, dependente do plano
+        else echo '<script>alert("Preencha pelo menos algum campo de dado.")</script>';
+    }
 }
 
 ?>
@@ -215,17 +227,21 @@ if (isset($_POST['registrar']))
                            class="form-control" name = "fim_ferias" id = "fim_ferias">
             </div>
             
-            <div style = "width: 400px;
-						background-color: #FFC000;
-						margin: 40px auto;
-						border-radius: 30px;"
-				class="container">
-			<div class="row justify-content-center">
+            <div class="container">
+		<div style = "margin: 30px; width: auto" class="row justify-content-center">
+			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
+                    type="button"
+                    onclick = "window.location.href='pgRecepcao.php'"
+                    class="btn">VOLTAR</button>
+
+           
             <input type = "submit" 
                     name = "registrar"
                     value = "REGISTRAR"
                     style = "border-color: transparent; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; font-size: 30px; border-radius: 15px;">
-        </div>
+            
+		</div>
+		</div>
         </form>
     <body>
 </html>

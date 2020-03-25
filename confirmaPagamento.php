@@ -1,21 +1,22 @@
 <?php
 session_start();
 
-require_once('extra/classes/bd.class.php');
-require('extra/classes/$cliente.class.php');
-banco_mysql::conn();
-$$cliente = new $cliente();
-
 if (!isset($_SESSION['regpagamento'])) {
 	header('Location: registraAula.php');
 	exit();
 }
-	$cliente -> $aluno_matricula = $_SESSION['matricula'];
-	$cliente -> $aluno_pagamento = $_SESSION['pagamento'];
-	$cliente -> $aluno_ppagamento = $_SESSION['ppagamento'];
-	$cliente -> $aluno_plano = $_SESSION['plano'];
-	$cliente -> $aluno_dferias = $_SESSION['dferias'];
-	$cliente -> $aluno_flagferias = $_SESSION['flagferias'];
+
+require_once('extra/classes/bd.class.php');
+require('extra/classes/cliente.class.php');
+banco_mysql::conn();
+$cliente = new Cliente();
+
+	$cliente -> aluno_matricula = $_SESSION['matricula'];
+	$cliente -> aluno_pagamento = $_SESSION['pagamento'];
+	$cliente -> aluno_ppagamento = $_SESSION['ppagamento'];
+	$cliente -> aluno_plano = $_SESSION['plano'];
+	$cliente -> aluno_dferias = $_SESSION['dferias'];
+	$cliente -> aluno_flagferias = $_SESSION['flagferias'];
 	
     $iferias = $_SESSION['iferias'];
 	$fferias = $_SESSION['fferias'];
@@ -33,56 +34,63 @@ if (isset($_REQUEST['registrar']))
 {
 	if ($_SESSION['flag'] == 1) 
 	{
-		$cliente -> registraPagamento($cliente -> $aluno_matricula, $cliente -> $aluno_pagamento, $cliente -> $aluno_ppagamento);
+		$cliente -> registraPagamento($cliente -> aluno_matricula, $cliente -> aluno_pagamento, $cliente -> aluno_ppagamento);
+		$cliente -> aluno_dferias= 0;
+		$cliente -> aluno_flagferias = 0;
+		$cliente -> registraFerias($cliente -> aluno_matricula, $cliente -> aluno_dferias, $cliente -> aluno_ppagamento, $cliente -> aluno_flagferias);
+
 		header('Location: registraPagamento.php');
 	 }//só pagamento
 	
 	else if ($_SESSION['flag'] == 2)
 	{
-		if (($dif_data + $cliente -> $aluno_dferias) <= 30 && $cliente -> $aluno_flagferias < 3)
+		if (($dif_data + $cliente -> aluno_dferias) <= 30 && $cliente -> aluno_flagferias < 3)
 		{
-			$cliente -> $aluno_flagferias = $cliente -> $aluno_flagferias + 1;
+			$cliente -> aluno_flagferias = $cliente -> aluno_flagferias + 1;
 
-			$cliente -> $aluno_dferias = $dif_data + $cliente -> $aluno_dferias;
-			$val = strval($cliente -> $aluno_dferias);
+			$cliente -> aluno_dferias = $dif_data + $cliente -> aluno_dferias + 1;
+			$val = strval($cliente -> aluno_dferias);
 			$p = 'P';
 			$d = 'D';
 
-			$date = date('Y-m-d', strtotime($cliente -> $aluno_ppagamento));
-			$cliente -> $aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
-			$cliente -> $aluno_ppagamento ->add(new DateInterval($p.$val.$d));
-			$cliente -> $aluno_ppagamento = date_format($cliente -> $aluno_ppagamento, 'Y-m-d');
+			$date = date('Y-m-d', strtotime($cliente -> aluno_ppagamento));
+			$cliente -> aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+			$cliente -> aluno_ppagamento ->add(new DateInterval($p.$val.$d));
+			$cliente -> aluno_ppagamento = date_format($cliente -> aluno_ppagamento, 'Y-m-d');
 
-			$cliente -> registraFerias($cliente -> $aluno_matricula, $cliente -> $aluno_dferias, $cliente -> $aluno_ppagamento, $cliente -> $aluno_flagferias);
+			$cliente -> registraFerias($cliente -> aluno_matricula, $cliente -> aluno_dferias, $cliente -> aluno_ppagamento, $cliente -> aluno_flagferias);
 
 			header('Location: registraPagamento.php');
 		}
-		else echo '<script>alert("$cliente excedeu dias de férias ou parcelamento de dias.")</script>';
+		else echo '<script>alert("cliente excedeu dias de férias ou parcelamento de dias.")</script>';
 	} //só férias
 
 	else if ($_SESSION['flag'] == 3)
 	{
-		$cliente -> registraPagamento($cliente -> $aluno_matricula, $cliente -> $aluno_pagamento, $cliente -> $aluno_ppagamento);
-		
-		if (($dif_data + $cliente -> $aluno_dferias) <= 30 && $cliente -> $aluno_flagferias < 3)
-		{
-			$cliente -> $aluno_flagferias = $cliente -> $aluno_flagferias + 1;
+		$cliente -> registraPagamento($cliente -> aluno_matricula, $cliente -> aluno_pagamento, $cliente -> aluno_ppagamento);
+		$cliente -> aluno_dferias= 0;
+		$cliente -> aluno_flagferias = 0;
+		$cliente -> registraFerias($cliente -> aluno_matricula, $cliente -> aluno_dferias, $cliente -> aluno_ppagamento, $cliente -> aluno_flagferias);
 
-			$cliente -> $aluno_dferias = $dif_data + $cliente -> $aluno_dferias;
-			$val = strval($cliente -> $aluno_dferias);
+		if (($dif_data + $cliente -> aluno_dferias) <= 30 && $cliente -> aluno_flagferias < 3)
+		{
+			$cliente -> aluno_flagferias = $cliente -> aluno_flagferias + 1;
+
+			$cliente -> aluno_dferias = $dif_data + $cliente -> aluno_dferias + 1;
+			$val = strval($cliente -> aluno_dferias);
 			$p = 'P';
 			$d = 'D';
 
-			$date = date('Y-m-d', strtotime($cliente -> $aluno_ppagamento));
-			$cliente -> $aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
-			$cliente -> $aluno_ppagamento ->add(new DateInterval($p.$val.$d));
-			$cliente -> $aluno_ppagamento = date_format($cliente -> $aluno_ppagamento, 'Y-m-d');
+			$date = date('Y-m-d', strtotime($cliente -> aluno_ppagamento));
+			$cliente -> aluno_ppagamento = \DateTime::createFromFormat("Y-m-d", $date);
+			$cliente -> aluno_ppagamento ->add(new DateInterval($p.$val.$d));
+			$cliente -> aluno_ppagamento = date_format($cliente -> aluno_ppagamento, 'Y-m-d');
 
-			$cliente -> registraFerias($matricula, $dferias, $ppagamento, $flagferias);
+			$cliente -> registraFerias($cliente -> aluno_matricula, $cliente -> aluno_dferias, $cliente -> aluno_ppagamento, $cliente -> aluno_flagferias);
 
 			header('Location: registraPagamento.php');
 		}
-		else echo '<script>alert("$cliente excedeu dias de férias ou parcelamento de dias.")</script>';
+		else echo '<script>alert("cliente excedeu dias de férias ou parcelamento de dias.")</script>';
 	} //férias e pagamento
 }
 ?>
@@ -121,19 +129,19 @@ if (isset($_REQUEST['registrar']))
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Matrícula:</td>
-						<td><?=$matricula?></td>
+						<td><?=$_SESSION['matricula']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Plano:</td>
-						<td><?=$plano?></td>
+						<td><?=$_SESSION['plano']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Data de pagamento:</td>
-						<td><?=$pagamento?></td>
+						<td><?=$_SESSION['pagamento']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Próximo pagamento:</td>
-						<td><?=$ppagamento?></td>
+						<td><?=$_SESSION['ppagamento']?></td>
 					</tr>
 					<tr>
 						<td style = "font-family: Bahnschrift SemiBold;">Início de férias:</td>

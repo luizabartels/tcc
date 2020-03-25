@@ -16,12 +16,22 @@ $sensor = new SensorBiometrico();
   /* DIGITAL */
 
   $output = $sensor -> autenticaDigital();
+  //echo $output;
+  //$output = 'A'; para teste
 
   if ($output == NULL) header("Location: pagError.php");
   else if ($output != NULL)
   { 
     $matricula = $usuario -> selecionaDigital($output);
-    $cont = count ($presenca -> procuraPresenca($matricula));
+
+    if ($matricula == $_SESSION['matricula']) $cont = count ($presenca -> procuraPresenca($matricula));
+    else
+    {
+      $cont = 0;
+      echo '<script>alert("Digital de outro usuário.")</script>';
+      header('refresh:0.5; url=pgAluno.php');
+    }
+    
   }
 ?>
 

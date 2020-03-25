@@ -1,15 +1,16 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['regaula'])) {
+	header('Location: registraAula.php');
+	exit();
+}
+
 require_once('extra/classes/bd.class.php');
 require('extra/classes/aula.class.php');
 banco_mysql::conn();
 $aula = new Aulas();
 
-if (!isset($_SESSION['regaula'])) {
-	header('Location: registraAula.php');
-	exit();
-}
 	$aula -> aula = $_SESSION['nome_aula'];
 	$aula -> inicio = $_SESSION['inicio_aula'];
 	$aula -> fim = $_SESSION['fim_aula'];

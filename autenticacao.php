@@ -17,21 +17,21 @@ if ( !isset($_POST['matricula']) )
 if ($adm -> autenticaAdm($_POST['matricula']) == 0001)
 	{
 		session_regenerate_id();
-		$_SESSION['loggedin'] = TRUE;
+		$_SESSION['loggedinGerencia'] = TRUE;
 		$_SESSION['matricula'] = $_POST['matricula'];
 		header('Location: pgGerencia.php');
 	}
 else if ($adm -> autenticaAdm($_POST['matricula']) == 0002)
 	{
 		session_regenerate_id();
-		$_SESSION['loggedin'] = TRUE;
+		$_SESSION['loggedinRecepcao'] = TRUE;
 		$_SESSION['matricula'] = $_POST['matricula'];
 		header('Location: pgRecepcao.php');
 	}
 else if ($adm -> autenticaAdm($_POST['matricula']) == 0003)
 	{
 		session_regenerate_id();
-		$_SESSION['loggedin'] = TRUE;
+		$_SESSION['loggedinFisioterapeuta'] = TRUE;
 		$_SESSION['matricula'] = $_POST['matricula'];
 		header('Location: pgFisioterapeuta.php');
 	}
@@ -39,7 +39,7 @@ else if ($adm -> autenticaAdm($_POST['matricula']) == 0003)
 else if ($cliente -> autenticaCliente($_POST['matricula'])) 
 	{
 		session_regenerate_id();
-		$_SESSION['loggedin'] = TRUE;
+		$_SESSION['loggedinAluno'] = TRUE;
 		$_SESSION['matricula'] = $_POST['matricula'];
 		header('Location: pgAluno.php');
 	}

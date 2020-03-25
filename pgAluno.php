@@ -2,7 +2,7 @@
 
 session_start();
 
-if (!isset($_SESSION['loggedin'])) {
+if (!isset($_SESSION['loggedinAluno'])) {
 	header('Location: login.php');
 	exit();
 }

@@ -11,8 +11,8 @@
             $hora_atual = new DateTime();
             $hora_atual = date_format($hora_atual,'H:i:s');
 
-            $command = escapeshellcmd('python ../com_serial/leitor_digital.py');
-            
+            $command = escapeshellcmd('python ./extra/com_serial/leitor_digital.py');
+
             $hfisio = new DateTime();
             $hfisio = date_format($hfisio,'H:i:s');
 
@@ -28,10 +28,8 @@
                 $dif_hora = date('s',$dif_hora);
 
                 $output = shell_exec($command);
-
                 $output = strtok($output, "b'");
             }
-
             return $output;
         }
     }

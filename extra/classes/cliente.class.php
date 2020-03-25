@@ -147,10 +147,6 @@
 
                 for ($cont = 0; $cont < $i; $cont++)
                 {
-                    $prpagamento = $result[$cont]['ppagamento'];
-                    $prpagamento = strtotime(str_replace('-','/', $prpagamento));
-                    $dif_data = ($data_atual - $prpagamento)/86400;
-
                     $j++;
                     $dadosAlunos[0] = $result[$cont]['matricula'];
                     $dadosAlunos[1] = $result[$cont]['nome'];
@@ -159,9 +155,7 @@
                     $dadosAlunos[4] = $result[$cont]['endereco'];
                     $dadosAlunos[5] = $result[$cont]['plano'];
                     $dadosAlunos[6] = $result[$cont]['pagamento'];
-                    $ppagamento = $result[$cont]['ppagamento'];
-                    $ppagamento = strtotime(str_replace('-','/', $ppagamento));
-                    $dadosAlunos[7] = date('d-m-Y', $ppagamento);
+                    $dadosAlunos[7] = $result[$cont]['ppagamento'];
 
                     $dadosAlunosFinal[$j] = $dadosAlunos;
                 } //fim for
@@ -194,10 +188,6 @@
 
                 for ($cont = 0; $cont < $i; $cont++)
                 {
-                    $prpagamento = $result[$cont]['ppagamento'];
-                    $prpagamento = strtotime(str_replace('-','/', $prpagamento));
-                    $dif_data = ($data_atual - $prpagamento)/86400;
-
                     $j++;
                     $dadosAlunos[0] = $result[$cont]['matricula'];
                     $dadosAlunos[1] = $result[$cont]['nome'];
@@ -206,9 +196,7 @@
                     $dadosAlunos[4] = $result[$cont]['endereco'];
                     $dadosAlunos[5] = $result[$cont]['plano'];
                     $dadosAlunos[6] = $result[$cont]['pagamento'];
-                    $ppagamento = $result[$cont]['ppagamento'];
-                    $ppagamento = strtotime(str_replace('-','/', $ppagamento));
-                    $dadosAlunos[7] = date('d-m-Y', $ppagamento);
+                    $dadosAlunos[7] = $result[$cont]['ppagamento'];
 
                     $dadosAlunosFinal[$j] = $dadosAlunos;
                 } //fim for
@@ -332,6 +320,8 @@
             $sqlSelecionar = "SELECT matricula, digital FROM alunos";
             $selecionar = self::conn()->prepare($sqlSelecionar);
             $selecionar -> execute();
+
+            $dadosAlunos = 0;
 
             if($selecionar->rowCount() >= 1)
             {

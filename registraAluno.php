@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['Recepcao'])) {
+	header('Location: pgRecepcao.php');
+	exit();
+}
 
 if (isset($_POST['registrar']))
 {
@@ -148,17 +152,21 @@ if (isset($_POST['registrar']))
                 </div>
             
 
-                <div style = "width: 400px;
-						background-color: #FFC000;
-						margin: 40px auto;
-						border-radius: 30px;"
-				class="container">
-			<div class="row justify-content-center">
+                <div class="container">
+		<div style = "margin: 30px; width: auto" class="row justify-content-center">
+			<button style = "margin-right: 30px; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; text-align: center; font-size: 30px; border-radius: 15px;"
+                    type="button"
+                    onclick = "window.location.href='pgRecepcao.php'"
+                    class="btn">VOLTAR</button>
+
+           
             <input type = "submit" 
                     name = "registrar"
                     value = "REGISTRAR"
                     style = "border-color: transparent; width: 250px; height: 100px; background-color: #FFC000; font-family: Bahnschrift SemiBold; font-size: 30px; border-radius: 15px;">
-        </div>
+            
+		</div>
+		</div>
         </form>
         
     <body>

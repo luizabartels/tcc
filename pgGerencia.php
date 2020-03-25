@@ -2,6 +2,12 @@
 
 session_start();
 
+if (!isset($_SESSION['loggedinGerencia'])) 
+{
+	header('Location: login.php');
+	exit();
+}
+
 require_once('extra/classes/bd.class.php');
 require('extra/classes/cliente.class.php');
 banco_mysql::conn();
